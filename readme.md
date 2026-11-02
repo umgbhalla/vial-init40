@@ -1,3 +1,9 @@
+# INIT40 Vial-QMK
+
+INIT40 vendor firmware with upstream history, dependency patches, and a clean build workflow.
+
+See [INIT40 setup and build instructions](README.init40.md).
+
 # Quantum Mechanical Keyboard Firmware
 
 [![Current Version](https://img.shields.io/github/tag/qmk/qmk_firmware.svg)](https://github.com/qmk/qmk_firmware/tags)
