@@ -2,7 +2,10 @@
 
 This repository keeps Vial-QMK history and adds the INIT40 vendor source package.
 The integration starts at upstream `dd43959ae5c08d8a28d38a1acf7b04e86b14a344`.
-The source package's old build metadata reports `1d9c72972d-dirty`; this is provenance metadata, not a verified exact base.
+The source package's old build metadata reports `1d9c72972d-dirty` (2026-02-23).
+That commit is an ancestor of the integration base, 12 commits behind it. All changes
+between those two upstream commits are under `keyboards/`; their shared core is identical.
+The metadata alone does not prove the exact vendor source history.
 
 ## Build
 
@@ -17,7 +20,8 @@ util/init40/build.sh
 ```
 
 The target is `init40/init40:vial`. Output: `init40_init40_vial.bin`.
-The build script starts with a clean target. It does not flash a device.
+The build script starts with a clean target. It sets `SKIP_GIT=yes` because setup
+already prepares the required submodules; this also omits Git version metadata. It does not flash a device.
 GitHub Actions also builds this target and stores the BIN, ELF, and map as artifacts.
 
 Setup initializes only ChibiOS, ChibiOS-Contrib, and printf. It applies the tracked

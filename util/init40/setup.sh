@@ -14,4 +14,5 @@ for patch in util/init40/patches/*.patch; do
     fi
 done
 python3 -m venv .venv
+.venv/bin/python -m ensurepip --upgrade
 .venv/bin/python -m pip install -r util/init40/requirements.lock
