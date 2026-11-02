@@ -94,3 +94,6 @@ GRAPHICS
 *.hex binary
 *.eep binary
 nix/sources.nix linguist-generated=true
+
+# Preserve vendor dependency patch bytes.
+util/init40/patches/*.patch -text
