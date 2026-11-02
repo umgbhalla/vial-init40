@@ -1,0 +1,17 @@
+{
+  "builddefs/common_features.mk": "28a9b99dd2effae20edabdcba280ac83fb2b582571056078ea9a342e84e1d9ed",
+  "builddefs/common_rules.mk": "6fa6d8fcbd636218054343dd2b96cb2d7053db4360911b3706eb23e85d1413de",
+  "quantum/action_util.c": "acef9021ada0d3085dc88a7a913c08da1a352f95fa35883390949b59986d265f",
+  "quantum/action_util.h": "7bcb38b1dcfa7a254b97eee6ba05df975ae6015ed6f3ebf9580f019ae9deaa4b",
+  "quantum/eeconfig.c": "b67c253fd7d493896a9ffe61bad1b452e38843be38d5cd32fcc52bc95e6ed82a",
+  "quantum/keycode_config.h": "2d68477fd86f4e4a2ee08c506ebb4c90b42a9e757af577c4d40ff9a58cd59cc0",
+  "quantum/via.c": "8e57528d8fe042fc53e7a57a7bb9849d87d7af76e0c83d67f25f502b20111d4a",
+  "quantum/vial.c": "81c907f4cb5004400ea4c893ee073773297414c4e7f2abb08500afe5be006559",
+  "tmk_core/protocol/chibios/usb_main.c": "2b4e6129b7d2f02b46167c4832f2fa0340c0fe78342d777f366132916c5be22f",
+  "tmk_core/protocol/host.h": "8f1b85d0d9066c6d2f47045797e67e67e491cdeeb6137b55937652cf1597c442",
+  "tmk_core/protocol/report.c": "152a06ccc586eda27289c482cd1b991714c407f12346da45a9ed577afc9d533b",
+  "tmk_core/protocol/usb_descriptor.c": "594d6cc16e9bffe72a5571cac0c8a622a4ab635ac3d5cdddff6c9c121b6aee6f",
+  "tmk_core/protocol/vusb/vusb.c": "9bc7fdfae62c1dff27709ccc6816ceef0cf22c4ce6f13256ea77b5a1ea9d4284",
+  "lib/rdr_lib/librdrcommon.a": "8168e5a9f063ea06d4452d872bcaec368f21ef8df4e1ced4b6a872d7b8b56961",
+  "lib/rdr_lib/rdr_common.h": "7031f9733ee2d0411f6ed8a7cbf463aa63a3807bd92a3db28fb722205be5859b"
+}
