@@ -29,14 +29,18 @@
  */
 uint8_t has_anykey(void) {
     uint8_t  cnt = 0;
-    uint8_t* p   = keyboard_report->keys;
-    uint8_t  lp  = sizeof(keyboard_report->keys);
 #ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
-        p  = nkro_report->bits;
-        lp = sizeof(nkro_report->bits);
+    if (keymap_config.User_Send_Type && keyboard_protocol && keymap_config.nkro) {
+        uint8_t *p  = nkro_report->bits;
+        uint8_t  lp = sizeof(nkro_report->bits);
+        while (lp--) {
+            if (*p++) cnt++;
+        }
+        return cnt;
     }
 #endif
+    uint8_t *p  = keyboard_report->keys;
+    uint8_t  lp = sizeof(keyboard_report->keys);
     while (lp--) {
         if (*p++) cnt++;
     }
@@ -49,7 +53,7 @@ uint8_t has_anykey(void) {
  */
 uint8_t get_first_key(void) {
 #ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
+    if (keymap_config.User_Send_Type && keyboard_protocol && keymap_config.nkro) {
         uint8_t i = 0;
         for (; i < NKRO_REPORT_BITS && !nkro_report->bits[i]; i++)
             ;
@@ -68,20 +72,19 @@ bool is_key_pressed(uint8_t key) {
     if (key == KC_NO) {
         return false;
     }
-#ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
-        if ((key >> 3) < NKRO_REPORT_BITS) {
-            return nkro_report->bits[key >> 3] & 1 << (key & 7);
-        } else {
-            return false;
-        }
-    }
-#endif
+    /* Hybrid NKRO keeps the first 6 keys in the 6KRO buffer. */
     for (int i = 0; i < KEYBOARD_REPORT_KEYS; i++) {
         if (keyboard_report->keys[i] == key) {
             return true;
         }
     }
+#ifdef NKRO_ENABLE
+    if (keyboard_protocol && keymap_config.nkro) {
+        if ((key >> 3) < NKRO_REPORT_BITS) {
+            return nkro_report->bits[key >> 3] & (1 << (key & 7));
+        }
+    }
+#endif
     return false;
 }
 
@@ -150,27 +153,29 @@ void del_key_bit(report_nkro_t* nkro_report, uint8_t code) {
  * FIXME: Needs doc
  */
 void add_key_to_report(uint8_t key) {
-#ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
-        add_key_bit(nkro_report, key);
+    int8_t empty = -1;
+    for (uint8_t i = 0; i < KEYBOARD_REPORT_KEYS; i++) {
+        if (keyboard_report->keys[i] == key) {
+            return;
+        }
+        if (empty < 0 && keyboard_report->keys[i] == 0x00) {
+            empty = (int8_t)i;
+        }
+    }
+    if (empty >= 0) {
+        keyboard_report->keys[empty] = key;
+        keymap_config.User_Send_Type = false;
         return;
     }
-#endif
-    add_key_byte(keyboard_report, key);
-}
 
-/** \brief del key from report
- *
- * FIXME: Needs doc
- */
-void del_key_from_report(uint8_t key) {
 #ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
-        del_key_bit(nkro_report, key);
-        return;
+    if (keyboard_protocol && keymap_config.nkro) {
+        if ((key >> 3) < NKRO_REPORT_BITS) {
+            nkro_report->bits[key >> 3] |= 1 << (key & 7);
+            keymap_config.User_Send_Type = true;
+        }
     }
 #endif
-    del_key_byte(keyboard_report, key);
 }
 
 /** \brief clear key from report
@@ -178,14 +183,12 @@ void del_key_from_report(uint8_t key) {
  * FIXME: Needs doc
  */
 void clear_keys_from_report(void) {
-    // not clear mods
-#ifdef NKRO_ENABLE
-    if (host_can_send_nkro() && keymap_config.nkro) {
-        memset(nkro_report->bits, 0, sizeof(nkro_report->bits));
-        return;
-    }
-#endif
+    // not clear mods; hybrid path keeps keys in both buffers
     memset(keyboard_report->keys, 0, sizeof(keyboard_report->keys));
+#ifdef NKRO_ENABLE
+    memset(nkro_report->bits, 0, sizeof(nkro_report->bits));
+#endif
+    keymap_config.User_Send_Type = false;
 }
 
 #ifdef MOUSE_ENABLE

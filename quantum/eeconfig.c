@@ -217,9 +217,12 @@ void eeconfig_update_default_layer(layer_state_t state) {
 
 void eeconfig_read_keymap(keymap_config_t *keymap_config) {
     nvm_eeconfig_read_keymap(keymap_config);
+    keymap_config->User_Send_Type = false;
 }
 void eeconfig_update_keymap(const keymap_config_t *keymap_config) {
-    nvm_eeconfig_update_keymap(keymap_config);
+    keymap_config_t tmp     = *keymap_config;
+    tmp.User_Send_Type      = false;
+    nvm_eeconfig_update_keymap(&tmp);
 }
 
 #ifdef AUDIO_ENABLE

@@ -88,6 +88,7 @@ STATIC_ASSERT(TOTAL_INTERFACES <= MAX_INTERFACES, "There are not enough availabl
 #endif
 
 static report_keyboard_t keyboard_report_sent;
+uint8_t        keyboard_protocol  = 1;
 
 static void send_report_fragment(uint8_t endpoint, void *data, size_t size) {
     for (uint8_t retries = 5; retries > 0; retries--) {
@@ -228,7 +229,12 @@ host_driver_t *vusb_driver(void) {
 }
 
 static void send_keyboard(report_keyboard_t *report) {
-    if (usb_device_state_get_protocol() == USB_PROTOCOL_BOOT) {
+    // if (usb_device_state_get_protocol() == USB_PROTOCOL_BOOT) {
+    //     send_report(1, &report->mods, 8);
+    // } else {
+    //     send_report(1, report, sizeof(report_keyboard_t));
+    // }
+    if (!keyboard_protocol) {
         send_report(1, &report->mods, 8);
     } else {
         send_report(1, report, sizeof(report_keyboard_t));

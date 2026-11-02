@@ -58,6 +58,9 @@ extern keymap_config_t keymap_config;
 extern usb_endpoint_in_t  usb_endpoints_in[USB_ENDPOINT_IN_COUNT];
 extern usb_endpoint_out_t usb_endpoints_out[USB_ENDPOINT_OUT_COUNT];
 
+/* Report protocol (1) vs boot protocol (0). Default 1 so wireless NKRO overflow still works. */
+uint8_t keyboard_protocol = 1;
+
 static bool __attribute__((__unused__)) send_report_buffered(usb_endpoint_in_lut_t endpoint, void *report, size_t size);
 static void __attribute__((__unused__)) flush_report_buffered(usb_endpoint_in_lut_t endpoint, bool padded);
 static bool __attribute__((__unused__)) receive_report(usb_endpoint_out_lut_t endpoint, void *report, size_t size);
@@ -270,8 +273,6 @@ static bool usb_requests_hook_cb(USBDriver *usbp) {
                         return usb_get_report_cb(usbp);
                     case HID_REQ_GetProtocol:
                         if (setup->wIndex == KEYBOARD_INTERFACE) {
-                            static uint8_t keyboard_protocol;
-                            keyboard_protocol = usb_device_state_get_protocol();
                             usbSetupTransfer(usbp, &keyboard_protocol, sizeof(keyboard_protocol), NULL);
                             return true;
                         }
@@ -296,6 +297,7 @@ static bool usb_requests_hook_cb(USBDriver *usbp) {
                     case HID_REQ_SetProtocol:
                         if (setup->wIndex == KEYBOARD_INTERFACE) {
                             usb_device_state_set_protocol(setup->wValue.lbyte);
+                            keyboard_protocol = setup->wValue.lbyte;
                         }
                         usbSetupTransfer(usbp, NULL, 0, NULL);
                         return true;

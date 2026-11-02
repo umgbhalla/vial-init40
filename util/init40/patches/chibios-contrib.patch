@@ -1,0 +1,479 @@
+--- a/os/hal/ports/ES32/FS026/hal_lld.c
++++ b/os/hal/ports/ES32/FS026/hal_lld.c
+@@ -1,124 +1,114 @@
+-/*
+-    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
+-              Copyright (C) 2020 Yaotian Feng
+-
+-    Licensed under the Apache License, Version 2.0 (the "License");
+-    you may not use this file except in compliance with the License.
+-    You may obtain a copy of the License at
+-
+-        http://www.apache.org/licenses/LICENSE-2.0
+-
+-    Unless required by applicable law or agreed to in writing, software
+-    distributed under the License is distributed on an "AS IS" BASIS,
+-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-    See the License for the specific language governing permissions and
+-    limitations under the License.
+-*/
+-
+-/**
+- * @file    hal_lld.c
+- * @brief   PLATFORM HAL subsystem low level driver source.
+- *
+- * @addtogroup HAL
+- * @{
+- */
+-
+-
+-#include "hal.h"
+-
+-/*===========================================================================*/
+-/* Driver local definitions.                                                 */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver exported variables.                                                */
+-/*===========================================================================*/
+-
+-/**
+-  * @brief update the value of SystemCoreClock after changing the system clock.
+-  */
+-unsigned int SystemCoreClock;
+-unsigned int SystemFrequency_SysClk;
+-unsigned int SystemFrequency_AHBClk;
+-unsigned int SystemFrequency_APBClk;
+-unsigned int HRC48Frequency;
+-unsigned int PLL0Frequency;
+-
+-/*===========================================================================*/
+-/* Driver local variables and types.                                         */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver local functions.                                                   */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver interrupt handlers.                                                */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver exported functions.                                                */
+-/*===========================================================================*/
+-#if ES32_NO_INIT
+-__attribute__((weak)) void hal_lld_init(void)
+-{
+-    
+-}
+-#else
+-void HardFault_Handler(void)
+-{
+-    while(1);
+-}
+-
+-const md_rcu_init_typedef rcu_initStruct =    /**< RCU init structure */
+-{
+-    MD_RCU_MPRE_MCO_DIV1,
+-    MD_RCU_MSW_MCO_DISABLE,
+-    ES32_PLL_SOURSE_SELECT,
+-    ES32_PLL_CLK_FREQ,
+-    ES32_BUS_DIV_PPRE,
+-    ES32_BUS_DIV_HPRE,
+-    ES32_SYSCLK_SOURSE_SELECT,
+-#if ES32_PLL_CLK_EN
+-#if ES32_HOSC_CLK_EN
+-    (RCU_CON_HRCON | RCU_CON_HRC48ON_MSK | RCU_CON_PLL0ON | RCU_CON_HOSCON),
+-#else
+-    (RCU_CON_HRCON | RCU_CON_HRC48ON_MSK | RCU_CON_PLL0ON),
+-#endif
+-#else
+-#if ES32_HOSC_CLK_EN
+-    (RCU_CON_HRCON | RCU_CON_HRC48ON_MSK | RCU_CON_HOSCON),
+-#else
+-    (RCU_CON_HRCON | RCU_CON_HRC48ON_MSK),
+-#endif
+-#endif
+-};
+-
+-/**
+- * @brief   Low level HAL driver initialization.
+- *
+- * @notapi
+- */
+-void hal_lld_init(void)
+-{
+-    __disable_irq();
+-#if ES32_PLL_CLK_EN
+-    md_rcu_pll0_init(RCU, (md_rcu_init_typedef*)(&rcu_initStruct));
+-#endif
+-    md_rcu_sys_init(RCU, (md_rcu_init_typedef*)(&rcu_initStruct));
+-    md_rcu_enable_gpioa(RCU);
+-    md_rcu_enable_gpiob(RCU);
+-    md_rcu_enable_gpioc(RCU);
+-    md_rcu_enable_gpiod(RCU);
+-    md_rcu_enable_usb(RCU);
+-#if ES32_USE_USB_SOF_TRIM_HRC48
+-    /*Using USB_SOF to calibrate the internal clock*/
+-    md_rcu_enable_csu(RCU);
+-    CSU->CON |= CSU_CON_AUTOEN_MSK;
+-    CSU->CON |= CSU_CON_CNTEN_MSK;
+-#endif
+-    __enable_irq();
+-}
+-#endif
+-
+-/** @} */
++/*
++    ChibiOS - Copyright (C) 2006..2016 Giovanni Di Sirio
++              Copyright (C) 2020 Yaotian Feng
++
++    Licensed under the Apache License, Version 2.0 (the "License");
++    you may not use this file except in compliance with the License.
++    You may obtain a copy of the License at
++
++        http://www.apache.org/licenses/LICENSE-2.0
++
++    Unless required by applicable law or agreed to in writing, software
++    distributed under the License is distributed on an "AS IS" BASIS,
++    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++    See the License for the specific language governing permissions and
++    limitations under the License.
++*/
++
++/**
++ * @file    hal_lld.c
++ * @brief   PLATFORM HAL subsystem low level driver source.
++ *
++ * @addtogroup HAL
++ * @{
++ */
++
++
++#include "hal.h"
++
++/*===========================================================================*/
++/* Driver local definitions.                                                 */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver exported variables.                                                */
++/*===========================================================================*/
++
++/**
++  * @brief update the value of SystemCoreClock after changing the system clock.
++  */
++unsigned int SystemCoreClock;
++unsigned int SystemFrequency_SysClk;
++unsigned int SystemFrequency_AHBClk;
++unsigned int SystemFrequency_APBClk;
++unsigned int HRC48Frequency;
++unsigned int PLL0Frequency;
++
++/*===========================================================================*/
++/* Driver local variables and types.                                         */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver local functions.                                                   */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver interrupt handlers.                                                */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver exported functions.                                                */
++/*===========================================================================*/
++#if ES32_NO_INIT
++__attribute__((weak)) void hal_lld_init(void)
++{
++    
++}
++#else
++void HardFault_Handler(void)
++{
++    while(1);
++}
++
++
++const md_rcu_init_typedef rcu_initStruct =    /**< RCU init structure */
++{
++    MD_RCU_MPRE_MCO_DIV1,
++    MD_RCU_MSW_MCO_DISABLE,
++    MD_RCU_PLLSRC_HRC48,
++    MD_RCU_PLLCLK_PASS,
++    MD_RCU_PPRE_HCLK_DIV_1,
++    MD_RCU_HPRE_SYSCLK_DIV_1,
++    MD_RCU_SW_SYSCLK_HRC48,
++    (RCU_CON_HRCON | RCU_CON_HRC48ON_MSK),
++};
++
++
++/**
++ * @brief   Low level HAL driver initialization.
++ *
++ * @notapi
++ */
++void hal_lld_init(void)
++{
++    __disable_irq();
++//#if ES32_PLL_CLK_EN
++    //md_rcu_pll0_init(RCU, (md_rcu_init_typedef*)(&rcu_initStruct));
++//#endif
++    md_rcu_sys_init(RCU, (md_rcu_init_typedef*)(&rcu_initStruct));
++    md_rcu_enable_gpioa(RCU);
++    md_rcu_enable_gpiob(RCU);
++    md_rcu_enable_gpioc(RCU);
++    md_rcu_enable_gpiod(RCU);
++    md_rcu_enable_usb(RCU);
++//#if ES32_USE_USB_SOF_TRIM_HRC48
++    /*Using USB_SOF to calibrate the internal clock*/
++    md_rcu_enable_csu(RCU);
++    CSU->CON |= CSU_CON_AUTOEN_MSK;
++    CSU->CON |= CSU_CON_CNTEN_MSK;
++//#endif
++    __enable_irq();
++}
++#endif
++
++/** @} */
+--- a/os/hal/ports/ES32/LLD/TIMv1/hal_st_lld.c
++++ b/os/hal/ports/ES32/LLD/TIMv1/hal_st_lld.c
+@@ -1,92 +1,92 @@
+-/*
+-    Copyright (C) 2020 Yaotian Feng
+-
+-    Licensed under the Apache License, Version 2.0 (the "License");
+-    you may not use this file except in compliance with the License.
+-    You may obtain a copy of the License at
+-
+-        http://www.apache.org/licenses/LICENSE-2.0
+-
+-    Unless required by applicable law or agreed to in writing, software
+-    distributed under the License is distributed on an "AS IS" BASIS,
+-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-    See the License for the specific language governing permissions and
+-    limitations under the License.
+-*/
+-
+-/**
+- * @file    hal_st_lld.c
+- * @brief   PLATFORM ST subsystem low level driver source.
+- *
+- * @addtogroup ST
+- * @{
+- */
+-
+-#include "hal.h"
+-
+-#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
+-
+-/*===========================================================================*/
+-/* Driver local definitions.                                                 */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver exported variables.                                                */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver local types.                                                       */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver local variables and types.                                         */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver local functions.                                                   */
+-/*===========================================================================*/
+-
+-/*===========================================================================*/
+-/* Driver interrupt handlers.                                                */
+-/*===========================================================================*/
+-
+-#if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
+-/**
+- * @brief   System Timer vector.
+- * @details This interrupt is used for system tick in periodic mode.
+- *
+- * @isr
+- */
+-OSAL_IRQ_HANDLER(SysTick_Handler)
+-{
+-    OSAL_IRQ_PROLOGUE();
+-
+-    osalSysLockFromISR();
+-    osalOsTimerHandlerI();
+-    osalSysUnlockFromISR();
+-
+-    OSAL_IRQ_EPILOGUE();
+-}
+-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
+-
+-/*===========================================================================*/
+-/* Driver exported functions.                                                */
+-/*===========================================================================*/
+-
+-/**
+- * @brief   Low level ST driver initialization.
+- *
+- * @notapi
+- */
+-void st_lld_init(void)
+-{
+-#if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
+-    SysTick->LOAD = 72000 - 1;
+-    SysTick->CTRL = 0x10007;
+-    
+-#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
+-}
+-
+-#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
+-
+-/** @} */
++/*
++    Copyright (C) 2020 Yaotian Feng
++
++    Licensed under the Apache License, Version 2.0 (the "License");
++    you may not use this file except in compliance with the License.
++    You may obtain a copy of the License at
++
++        http://www.apache.org/licenses/LICENSE-2.0
++
++    Unless required by applicable law or agreed to in writing, software
++    distributed under the License is distributed on an "AS IS" BASIS,
++    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++    See the License for the specific language governing permissions and
++    limitations under the License.
++*/
++
++/**
++ * @file    hal_st_lld.c
++ * @brief   PLATFORM ST subsystem low level driver source.
++ *
++ * @addtogroup ST
++ * @{
++ */
++
++#include "hal.h"
++
++#if (OSAL_ST_MODE != OSAL_ST_MODE_NONE) || defined(__DOXYGEN__)
++
++/*===========================================================================*/
++/* Driver local definitions.                                                 */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver exported variables.                                                */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver local types.                                                       */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver local variables and types.                                         */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver local functions.                                                   */
++/*===========================================================================*/
++
++/*===========================================================================*/
++/* Driver interrupt handlers.                                                */
++/*===========================================================================*/
++
++#if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC) || defined(__DOXYGEN__)
++/**
++ * @brief   System Timer vector.
++ * @details This interrupt is used for system tick in periodic mode.
++ *
++ * @isr
++ */
++OSAL_IRQ_HANDLER(SysTick_Handler)
++{
++    OSAL_IRQ_PROLOGUE();
++
++    osalSysLockFromISR();
++    osalOsTimerHandlerI();
++    osalSysUnlockFromISR();
++
++    OSAL_IRQ_EPILOGUE();
++}
++#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
++
++/*===========================================================================*/
++/* Driver exported functions.                                                */
++/*===========================================================================*/
++
++/**
++ * @brief   Low level ST driver initialization.
++ *
++ * @notapi
++ */
++void st_lld_init(void)
++{
++#if (OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC)
++    SysTick->LOAD = 48000 - 1;
++    SysTick->CTRL = 0x10007;
++    
++#endif /* OSAL_ST_MODE == OSAL_ST_MODE_PERIODIC */
++}
++
++#endif /* OSAL_ST_MODE != OSAL_ST_MODE_NONE */
++
++/** @} */
+--- a/os/hal/ports/ES32/LLD/USBv1/hal_usb_lld.c
++++ b/os/hal/ports/ES32/LLD/USBv1/hal_usb_lld.c
+@@ -442,8 +442,8 @@
+     old_ep_idx = musb_get_active_ep();
+     musb_set_active_ep(ep_idx);
+     
+-    if((USB->CSR0L_TXCSRL) & USB_TXCSRL_TXRDY_MSK)
+-    {
++    if(es_usbd_ep_tx_ready_state(ep_idx))
++    {         
+         musb_set_active_ep(old_ep_idx);
+         return -3;
+     }
+@@ -547,6 +547,11 @@
+ 
+     if (ep0_status & ALD_USB_CSR0L_SETEND) {
+         USB->CSR0L_TXCSRL = ALD_USB_CSR0L_SETENDC;
++    }
++
++    if (g_musb_udc.dev_addr > 0) {
++        USB->FADDR = g_musb_udc.dev_addr;
++        g_musb_udc.dev_addr = 0;
+     }
+ 
+     switch (usb_ep0_state) {
+@@ -888,7 +893,7 @@
+ #if !defined(ES_NO_USB_SUSPEND)
+         ald_usb_int_enable(ALD_USB_INTCTRL_RESET | ALD_USB_INTCTRL_DISCONNECT | ALD_USB_INTCTRL_RESUME |ALD_USB_INTCTRL_SUSPEND | ALD_USB_INTCTRL_SOF);
+ #else
+-		ald_usb_int_enable(ALD_USB_INTCTRL_RESET | ALD_USB_INTCTRL_DISCONNECT | ALD_USB_INTCTRL_RESUME |ALD_USB_INTCTRL_SUSPEND);/*Î´¿ªÆôSOFÖÐ¶Ï*/
++		ald_usb_int_enable(ALD_USB_INTCTRL_RESET | ALD_USB_INTCTRL_DISCONNECT | ALD_USB_INTCTRL_RESUME |ALD_USB_INTCTRL_SUSPEND);
+ #endif
+         ald_usb_int_enable_ep(ALD_USB_INTEP_ALL);
+         ald_usb_int_register();
+@@ -937,11 +942,11 @@
+  */
+ void usb_lld_set_address(USBDriver *usbp)
+ {
+-    volatile uint32_t i;
+-    
+-    for(i = 0;i < 9999;i++){}
+-    
+-    USB->FADDR = usbp->address;
++    if (usbp->address == 0) {
++        ald_usb_dev_set_addr(0);
++    }
++
++    g_musb_udc.dev_addr = usbp->address;
+ }
+ 
+ /**
