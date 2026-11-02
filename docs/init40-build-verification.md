@@ -43,3 +43,13 @@ matches its pinned upstream commit.
 
 A second clean build also passed. Its hash is recorded above. Build timestamps
 and generated build IDs change between runs, so these builds are not byte-reproducible.
+
+## Fresh Linux checkout
+
+[GitHub Actions run 41465691240](https://github.com/umgbhalla/vial-init40/actions/runs/41465691240)
+passed on Ubuntu 24.04 at source commit `701af2b027f5410f55ce12c31b89bda30056774e`.
+It initialized all four required submodules, applied the vendor patch, completed a clean
+compile, and uploaded the BIN, ELF, and map. The Linux BIN is 89,188 bytes.
+Its SHA-256 is `8905a881258fd929af51db8c905f3c4d8e329ded1c26577229c235dfc06ee48b`.
+The initial CI check exposed missing LUFA USB headers; setup now initializes and checks
+that dependency explicitly.
