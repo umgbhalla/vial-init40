@@ -20,7 +20,7 @@ Verified locally on macOS ARM64 on 2026-11-02.
 
 SHA-256:
 
-- Fresh build: `09b4efc6d98a504835b3e0a6c385c006e05019aa42f12de1809aecc5db045e1f`
+- Fresh build: `13c4d2cb7407b8eb942a32b0959a517d4e4d09d197ef4441b87dd91ab9e679ec`
 - Downloaded October release: `1c8653bca2fa8ef2928fab134e207869c13b7be252004b5e78b2ef2d436ced20`
 - Binary bundled with source: `78236588831eb8a9dfa74ae9e527cda0bcdbf90e41e1405a67354730790e8aea`
 
@@ -40,3 +40,6 @@ The core vendor files and compiled library retain their supplied implementation.
 The Vial JSON filename is normalized to lowercase for Linux builds.
 Three ChibiOS-Contrib source changes are applied from the tracked patch; ChibiOS itself
 matches its pinned upstream commit.
+
+A second clean build also passed. Its hash is recorded above. Build timestamps
+and generated build IDs change between runs, so these builds are not byte-reproducible.
