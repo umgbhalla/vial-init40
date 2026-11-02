@@ -5,7 +5,7 @@ export PATH="$PWD/.venv/bin:$PATH"
 command -v arm-none-eabi-gcc >/dev/null || { echo 'Add the Arm GNU toolchain bin directory to PATH.' >&2; exit 1; }
 command -v qmk >/dev/null || { echo 'Run util/init40/setup.sh first.' >&2; exit 1; }
 # Refuse an unprepared checkout instead of silently building with stock drivers.
-for module in lib/chibios lib/chibios-contrib lib/printf; do
+for module in lib/chibios lib/chibios-contrib lib/printf lib/lufa; do
     expected=$(git ls-tree HEAD "$module" | awk '{print $3}')
     actual=$(git -C "$module" rev-parse HEAD)
     [ "$actual" = "$expected" ] || { echo "Run util/init40/setup.sh: wrong revision for $module" >&2; exit 1; }

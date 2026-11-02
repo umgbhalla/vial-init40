@@ -24,7 +24,7 @@ The build script starts with a clean target. It sets `SKIP_GIT=yes` because setu
 already prepares the required submodules; this also omits Git version metadata. It does not flash a device.
 GitHub Actions also builds this target and stores the BIN, ELF, and map as artifacts.
 
-Setup initializes only ChibiOS, ChibiOS-Contrib, and printf. It applies the tracked
+Setup initializes ChibiOS, ChibiOS-Contrib, printf, and LUFA (USB headers). It applies the tracked
 ChibiOS-Contrib patch. The submodule then appears modified by design. Re-running
 setup accepts an already applied patch and refuses conflicting changes.
 

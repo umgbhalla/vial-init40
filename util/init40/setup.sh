@@ -2,7 +2,7 @@
 set -euo pipefail
 cd "$(dirname "$0")/../.."
 # Only these submodules are required by the INIT40 ARM target.
-git submodule update --init --depth 1 lib/chibios lib/chibios-contrib lib/printf
+git submodule update --init --depth 1 lib/chibios lib/chibios-contrib lib/printf lib/lufa
 for patch in util/init40/patches/*.patch; do
     module="lib/$(basename "$patch" .patch)"
     patch_path="$PWD/$patch"
